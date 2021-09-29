@@ -4,7 +4,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect
@@ -16,4 +16,4 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
-  port: 3001
+  port: 3002

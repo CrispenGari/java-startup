@@ -26,6 +26,4 @@ public class Student implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable()
 }

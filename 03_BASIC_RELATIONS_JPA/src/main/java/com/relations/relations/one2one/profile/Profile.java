@@ -1,18 +1,19 @@
-package com.relations.relations.lecturer;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.relations.relations.course.Course;
+package com.relations.relations.one2one.profile;
+
+import com.relations.relations.one2one.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="lecturers")
+@Table(name = "profiles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lecturer implements Serializable {
+public class Profile implements Serializable {
     @SequenceGenerator(
             name="post_sequence",
             allocationSize = 1,
@@ -25,9 +26,8 @@ public class Lecturer implements Serializable {
     @Id
     private Long id;
     @Column(nullable = false)
-    private String name;
+    private String gender;
 
-    @JsonIgnore
-    @OneToOne(targetEntity = Course.class, mappedBy = "lecturer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Course course;
+    @OneToOne
+    private User user;
 }

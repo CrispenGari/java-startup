@@ -28,7 +28,6 @@ public class Course implements Serializable {
     private String code;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="lecturer_id", referencedColumnName = "id")
+    @JoinColumn()
     private Lecturer lecturer;
-
 }
