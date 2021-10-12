@@ -4,7 +4,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update #create
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect
