@@ -1,0 +1,7 @@
+extend type Query {
+    findUsers: [User]!
+    findUser: User
+}
+extend type Mutation {
+    createUser(username: String!): User!
+}

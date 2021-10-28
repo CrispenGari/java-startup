@@ -1,0 +1,20 @@
+type Post {
+    id: Int!
+    caption: String!
+    user: User
+}
+
+type User{
+    id: Int!
+    username: Int!
+    posts: [Post]!
+}
+# Root
+type Query {
+
+}
+
+# Root
+type Mutation {
+
+}
