@@ -1,8 +1,0 @@
-
-extend type Query {
-    findAllPosts: [Post]!
-}
-
-extend type Mutation {
-    createPost(caption: String!, userId: Int): Post!
-}
