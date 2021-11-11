@@ -6,7 +6,23 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
 </head>
 <body>
-<p th:text="'name: ' + ${customer.name}"></p>
-<p th:text="'age: ' + ${customer.age}"></p>
+<table border="1">
+    <thead>
+    <tr>
+        <th>name</th><th>age</th> <th>rights</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each ="customer: ${customers}">
+        <td th:text="${customer.name}"></td>
+        <td th:text="${customer.age}"></td>
+        <td th:switch="${customer.admin}">
+            <span th:case="true" th:text="'ADMIN'"></span>
+            <span th:case="false" th:text="'NOT ADMIN'"></span>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
 </body>
 </html>

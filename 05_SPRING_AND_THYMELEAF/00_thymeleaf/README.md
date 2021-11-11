@@ -223,3 +223,84 @@ public class CustomerController {
 <p th:text="'name: ' + ${customer.name}"></p>
 <p th:text="'age: ' + ${customer.age}"></p>
 ```
+
+### Collection Attributes
+
+Let's say we have a list of customers that need to be displayed on a table. In the controller we may have
+the code that may look as follows.
+
+```java
+ @GetMapping("/")
+    public String home(Model model){
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("customer1", 45L));
+        customers.add(new Customer("customer2", 45L));
+        model.addAttribute("customers", customers);
+        return  "home";
+    }
+```
+
+`home.html`
+
+```html
+<tr th:each ="customer: ${customers}">
+    <td th:text="${customer.name}"></td>
+    <td th:text="${customer.age}"></td>
+</tr>
+```
+
+### Conditional Evaluation
+The `th:if=”${condition}”` attribute is used to display a section of the view if the condition is met.
+The `th:unless=”${condition}”` attribute is used to display a section of the view if the condition is not met.
+
+The `Controller` will be changed to:
+
+```java
+@GetMapping("/")
+    public String home(Model model){
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("customer1", 45L, true));
+        customers.add(new Customer("customer2", 45L, false));
+        model.addAttribute("customers", customers);
+        return  "home";
+}
+```
+
+
+`home.html`
+
+```html
+ <tr th:each ="customer: ${customers}">
+        <td th:text="${customer.name}"></td>
+        <td th:text="${customer.age}"></td>
+        <td>
+            <span th:if="${customer.admin} == true">ADMIN</span>
+            <span th:unless="${customer.admin} == true">NOT ADMIN</span>
+        </td>
+    </tr>
+```
+
+### switch and case
+
+The th:switch and `th:case` attributes
+ are used to display content conditionally using the switch statement structure.
+
+For this we are going to change our `html` part to use switch case instead of if unless as follows:
+
+```html
+ <tr th:each ="customer: ${customers}">
+        <td th:text="${customer.name}"></td>
+        <td th:text="${customer.age}"></td>
+        <td th:switch="${customer.admin}">
+            <span th:case="true" th:text="'ADMIN'"></span>
+            <span th:case="false" th:text="'NOT ADMIN'"></span>
+        </td>
+    </tr>
+```
+
+### Handling User Input
+
+
+### Refs
+
+* [www.baeldung.com](https://www.baeldung.com/thymeleaf-in-spring-mvc)

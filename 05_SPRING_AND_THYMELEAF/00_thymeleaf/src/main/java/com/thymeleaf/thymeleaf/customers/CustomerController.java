@@ -3,13 +3,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-class Customer{
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+class Customer implements Serializable {
     private String name;
     private Long age;
+    private Boolean admin;
 
-    public Customer(String name, Long age){
+    public Customer(String name, Long age, Boolean admin) {
         this.name = name;
         this.age = age;
+        this.admin = admin;
     }
 
     public String getName() {
@@ -28,11 +34,20 @@ class Customer{
         this.age = age;
     }
 
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
+                ", admin=" + admin +
                 '}';
     }
 }
@@ -40,11 +55,10 @@ class Customer{
 public class CustomerController {
     @GetMapping("/")
     public String home(Model model){
-        Customer customer = new Customer(
-                "customer1",
-                45L
-        );
-        model.addAttribute("customer", customer);
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("customer1", 45L, true));
+        customers.add(new Customer("customer2", 45L, false));
+        model.addAttribute("customers", customers);
         return  "home";
     }
     @GetMapping("/about")
