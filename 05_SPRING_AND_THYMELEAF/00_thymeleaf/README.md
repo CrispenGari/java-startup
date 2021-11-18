@@ -300,7 +300,165 @@ For this we are going to change our `html` part to use switch case instead of if
 
 ### Handling User Input
 
+We are going to create a simple form that will take the data from the form. First we are going to create the
+User class in  the `user` package as follows.
+
+Before creating the User type we need to add `lombok` in our `pom.xml` so that we will use annotations
+to generate setters and getters.
+
+```xml
+ <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+```
+Restart the `pom.xml` and we will then go and create a User type as follows in the user package
+
+
+
+```java
+package com.thymeleaf.thymeleaf.user;
+import lombok.*;
+import java.sql.Date;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+    private String name;
+    private String email;
+    private String password;
+    private String gender;
+    private String note;
+    private boolean married;
+    private Date birthday;
+    private String profession;
+}
+```
+
+Next we are going to create a Controller in the user package named `UserController` as follows:
+
+```java
+@Controller
+public class UserController {
+    @GetMapping("/register")
+    public String showForm(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
+        List<String> listProfession = Arrays.asList("Developer", "Tester", "Architect");
+        model.addAttribute("listProfession", listProfession);
+        return "user/register";
+    }
+
+    @PostMapping("/register")
+    public String submitForm(@ModelAttribute("user") User user) {
+        System.out.println(user);
+        return "user/home";
+    }
+}
+```
+
+We are going to then create two templates the `home.html` and the `register.html` and they will be looking as folllows:
+
+
+1. `register.html`
+
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>User Registration</title>
+</head>
+<body>
+<div align="center">
+    <h1>User Registration</h1>
+    <form action="#" th:action="@{/register}" method="post" th:object="${user}">
+        <label>Full name:</label>
+        <input type="text" th:field="*{name}" /><br/>
+
+        <label>E-mail:</label>
+        <input type="text" th:field="*{email}" /><br/>
+
+        <label>Password:</label>
+        <input type="password" th:field="*{password}" /><br/>
+
+        <label>Birthday (yyyy-mm-dd):</label>
+        <input type="text" th:field="*{birthday}" /><br/>
+
+        <label>Gender:</label>
+        <input type="radio" th:field="*{gender}" value="Male" />Male
+        <input type="radio" th:field="*{gender}" value="Female" />Female<br/>
+
+        <label>Profession:</label>
+        <select th:field="*{profession}">
+            <option th:each="p : ${listProfession}" th:value="${p}" th:text="${p}" />
+        </select>
+        <br/>
+
+        <label>Married?</label>
+        <input type="checkbox" th:field="*{married}" /><br/>
+
+        <label>Note:</label>
+        <textarea rows="5" cols="25" th:field="*{note}"></textarea>
+        <br/>
+
+        <button type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>
+```
+
+First we have the following line in our html file:
+
+```html
+<form action="#" th:action="@{/register}" method="post" th:object="${user}">
+```
+When i submit the form, we are going to hit the `/register` route as a post method with the user object as
+data in the model. In Thymeleaf, hyperlink is wrapped inside `@{}` and access a model object inside `${}`.
+Note that in this form tag, the `th:object` attribute points to the name of the model object sent from Spring MVC controller.
+
+```html
+<input type="text" th:field="*{name}" />
+```
+The `th:field` attribute points to the field name of the object in the model. Field name is wrapped inside `*{}`
+
+2. `home.html`
+The `home.html` will be used to display the data that comes from the submitted form and it looks as follows:
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Registration Success</title>
+    <style type="text/css">
+    span {
+        display: inline-block;
+        width: 200px;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+<div align="center">
+    <h2>Registration Succeeded!</h2>
+    <span>Full name:</span><span th:text="${user.name}"></span><br/>
+    <span>E-mail:</span><span th:text="${user.email}"></span><br/>
+    <span>Password:</span><span th:text="${user.password}"></span><br/>
+    <span>Gender:</span><span th:text="${user.gender}"></span><br/>
+    <span>Profession:</span><span th:text="${user.profession}"></span><br/>
+    <span>Married?</span><span th:text="${user.married}"></span><br/>
+    <span>Note:</span><span th:text="${user.note}"></span><br/>
+</div>
+</body>
+```
+
+That s how we can handle form data in spring boot and thymeleaf.
 
 ### Refs
 
 * [www.baeldung.com](https://www.baeldung.com/thymeleaf-in-spring-mvc)
+* [www.codejava.net](https://www.codejava.net/frameworks/spring-boot/spring-boot-thymeleaf-form-handling-tutorial)
