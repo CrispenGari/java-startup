@@ -127,7 +127,7 @@ You can find all commands in the Redis documentation, or you can find the
 summary of them at [www.tutorialspoint.com](https://www.tutorialspoint.com/redis/redis_keys.htm).
 
 
-### Storing a `client`
+### Storing a `client` example
 
 Let's say we have a `Client` class which looks as follows:
 
@@ -155,7 +155,7 @@ public class Client {
     }
 }
 ```
-We have to implement `toString()` method that will serialise our Client object since redis only stores string values.
+If we want to store this client type object we have to implement `toString()` method that will serialise our Client object since redis only stores string values.
 ```java
 public class Client {
    ....
@@ -176,6 +176,14 @@ Then in the `RedisApplication` we will save our client as follows:
 Client client1 = new Client("crispen", 22);
 connection.set("client1", client1.toString());
 System.out.println(connection.get("client1"));
+```
+
+We will get the following as output:
+
+```json
+Client{
+    name = 'crispen', age=22
+}
 ```
 
 ### Refs
