@@ -1,132 +1,264 @@
-### GraphQL and Java Hello world
+### 01: Basic Schema and Types
 
-In this one we are going to setup the environment and create a hello world program in java-graphql.
-
-### Requirements
-Make sure that you have `java` in my case i have version `17` installed on my computer. I'm using `intellij` as
-my `IDE` and `Postman` as my `Client`.
-
-### Creating a new project
-Create a marven project using [start.spring.io](https://start.spring.io/) and select the following dependencies
-
-1. lombok
-2. spring-web
-
-Or you can click [this link](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.6.1&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=graphql&name=graphql&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.graphql&dependencies=web,lombok) to an download the zip file with all dependencies that we will begin with.
-
-> _Unzip the folder and open it in intellij._
-
-
-Next we are going to add the `graphql` core dependency in our `pom.xml` file:
-
-```xml
-<dependency>
-  <groupId>com.graphql-java-kickstart</groupId>
-  <artifactId>graphql-spring-boot-starter</artifactId>
-  <version>12.0.0</version>
-</dependency>
-```
-
-You can find this dependency on their [github repository](https://github.com/graphql-java-kickstart/graphql-spring-boot)
-Reload marven and open the `application.yml` file and change the server port number to be `3001`
-
-```yml
-server:
-  port: 3001
-```
-My `pom.xml` dependencies will look as follows:
-
-```xml
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.graphql-java-kickstart</groupId>
-			<artifactId>graphql-spring-boot-starter</artifactId>
-			<version>12.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-```
-### Creating a Simple Schema
-All graphql files will be in the `resources/graphql` folder. Our first graphql type in the `schema` is the `Query` type.
-We are going to create a file called `Query.graphqls` which will look as follows:
-
-```graphql
-type Query{
-    hello(name: String): String!
-}
-```
-Now our query `hello` takes a name as a string variable and returns a string.
-
-> _Note that all the graphql files will be in this `graphql`, and we can create more nested directories in this directory and be able to reference all the types in the graphql folder_
-
-### Creating a Resolver
-A resolver is essentially a way our graphql schema get the data. We are going in the `java` folder and create
-a package called `resolver`. In that package we are going to create a class called `HelloResolver` which
-will be decorated with `@Component` and implements a graphql query resolver interface as follows:
-
-```java
-package com.example.graphql.resolvers;
-import graphql.kickstart.tools.GraphQLQueryResolver;
-import org.springframework.stereotype.Component;
-
-@Component
-public class HelloResolver implements GraphQLQueryResolver {
-    public String hello(String name){
-        return "Hello, " + name;
-    }
-}
-```
-
-With this bare minimum of code we can try to make our graphql query `hello` and get the results back using
-a graphql playground, graphiql or any other client. In our case we are going to use `Postman` client.
-
-### Postman Client for GraphQL
-
-1. Go to postman and enter the url to your graphql server in our case it's http://localhost:33001/graphql.
-2. Change the request method to `POST`
-3. Under request body select `GraphQL`
-4. Write the following query
-
-```
-query Hello($name: String){
-    hello(name: $name)
-}
-```
-
-5. Add the following to graphql variables
-
-```json
-{
-    "name": "world"
-}
-```
-6. Click `SEND` and you will get the following response from our graphql server.
+In this one we are going to do a step by step implementation of a graphql api that will give us the following response:
 
 ```json
 {
     "data": {
-        "hello": "Hello, user"
+        "bankAccount": {
+            "error": null,
+            "account": {
+                "name": "bank-001",
+                "currency": "USD",
+                "client": {
+                    "firstName": "firstName",
+                    "lastName": "lastName",
+                    "balance": 234.99
+                }
+            }
+        }
     }
 }
 ```
 
-Now we have our hello world program in graphql and java working.
+When when we send the following request to the graphql server:
 
-### Refs
-1. [graphql-spring-boot](https://github.com/graphql-java-kickstart/graphql-spring-boot)
-2. [stackoverflow.com](https://stackoverflow.com/questions/66127334/graphql-java-is-expecting-query-parameter)
+```
+query BankAccount($input: BankAccountInput!){
+    bankAccount(input: $input){
+        error{
+            field
+            message
+        }
+        account{
+            name
+            currency
+            client{
+                firstName,
+                lastName,
+                balance
+            }
+
+        }
+    }
+}
+```
+
+With the following graphql variables:
+
+```java
+{
+    "input": {
+        "name": "bank-001",
+        "client":{
+            "firstName": "firstName",
+            "balance": 234.99,
+            "lastName": "lastName"
+        },
+         "currency": "zar"
+    }
+}
+```
+
+Essentially we are going to make use of the following basic graphql types:
+1. Enum
+2. Input Types
+3. Float, String
+4. Object types
+
+> _Note that there are more types that we wont look at in this example such as `Array` type but we will look at them
+letter on when we try to implement the `mutation` type.
 
 
+First we need to create our `schema`. We are going to create a file called `Query.graphqls` in the properties/graphql folder
+and it will look as follows:
+
+```graphql
+type Query{
+    hello(name: String): String!
+    bankAccount(input: BankAccountInput!) : BankAccountResponse
+}
+```
+Here we are intrested in the `bankAccount` query which takes in a bank account input `BankAccountInput`
+which is found in the `inputs/inputs.graphqls` and looks as follow:
+
+```
+# input type for a client account
+input ClientInput{
+    firstName: String!
+    lastName: String!
+    balance: Float!
+}
+# input type for a bank account
+input BankAccountInput{
+    client: ClientInput!
+    name: String!
+    currency: String!
+}
+```
+> Note that all the graphql files has to have an extension `.graphqls` so that `graphql-java` will pick them up
+in our spring boot application when building the `schema`.
+
+### ClientInput
+Client input is a java class that is located in the `resolvers/bank/types` package in a class `ClientInput` which looks as follows:
+
+```java
+@Value
+@Builder
+public class ClientInput{
+    private String firstName;
+    private String lastName;
+    private double balance;
+}
+```
+### BankAccountInput
+A bankAccount input is also a java class `BankAccountInput` which looks as follows:
+
+```java
+@Value
+@Builder
+public class BankAccountInput {
+   private String name;
+   private Client client;
+   private String currency;
+}
+```
+### BankAccountResolver
+The `BankAccountInput` is passed down to the `BankAccountResolver` which is located in the `bank` package and it
+looks as follows:
+
+```java
+package com.example.graphql.resolvers.bank;
+import com.example.graphql.resolvers.bank.types.*;
+import graphql.kickstart.tools.GraphQLQueryResolver;
+import org.springframework.stereotype.Component;
+
+import java.util.Locale;
+
+
+@Component
+public class BankAccountResolver implements GraphQLQueryResolver{
+    public BankAccountResponse bankAccount(BankAccountInput input){
+        Client client = Client.builder()
+                .balance(input.getClient().getBalance())
+                .firstName(input.getClient().getFirstName())
+                .lastName(input.getClient().getLastName())
+                .build();
+        Currency currency = input.getCurrency()
+                .toLowerCase(Locale.ROOT) == "zar" ? Currency.ZAR : Currency.USD;
+
+        BankAccount b = BankAccount.builder()
+                .name(input.getName())
+                .client(client)
+                .currency(currency)
+                .build();
+
+        return BankAccountResponse.builder()
+                .account(b)
+                .build();
+    }
+}
+```
+The `BankAccountResolver` implements the `GraphQLQueryResolver` which allows us to match the `Query` `bankAccount` in our
+schema `Query`.
+```
+bankAccount(input: BankAccountInput!) : BankAccountResponse
+```
+
+### BankAccountResponse
+The bank account response is an object type which looks as follows:
+
+```java
+@Value
+@Builder
+public class BankAccountResponse {
+    private  ErrorType error;
+    private BankAccount account;
+}
+```
+It has either two things:
+1. ErrorType
+ErrorType is nothing but a java class which is in the types and looks as follows:
+
+```java
+@Builder
+@Value
+public class ErrorType {
+    private  String field;
+    private String message;
+}
+
+```
+
+The schema definition for the error object type looks as follows:
+```
+type  Error{
+    message: String!
+    field: String!
+}
+```
+2. BankAccount
+A bank account type will be something that looks as follows:
+
+```java
+@Value
+@Builder
+public class BankAccount {
+    private String name;
+    private Client client;
+    private Currency currency;
+}
+```
+The `schema` definition for the `BankAccount` looks as follows:
+
+```
+type BankAccount{
+    client: Client!
+    currency: Currency!
+    name: String!
+}
+```
+
+### Client type
+
+The client type looks as follows:
+
+```
+type Client{
+    firstName: String!
+    lastName: String!
+    balance: Float!
+}
+```
+
+### Currency Enum type
+The currency is a graphql enum type with two values `ZAR` and `USD` and it looks as follows:
+
+```
+enum Currency{
+   USD,
+    ZAR
+}
+```
+### BankAccountResponse
+The `BankAccountResponse` schema definition if found in the `graphql/object/objectTypes.graphqls` file and
+it looks as follows:
+
+```
+# Error Type
+
+type  Error{
+    message: String!
+    field: String!
+}
+# Bank account Response
+type BankAccountResponse{
+    error: Error
+    account: BankAccount
+}
+```
+
+
+### Next
+
+Next we will look at the `Mutation` type.

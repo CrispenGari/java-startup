@@ -1,0 +1,5 @@
+type Client{
+    firstName: String!
+    lastName: String!
+    balance: Float!
+}

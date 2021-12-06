@@ -1,0 +1,13 @@
+
+# Error Type
+
+type  Error{
+    message: String!
+    field: String!
+}
+
+# Bank account Response
+type BankAccountResponse{
+    error: Error
+    account: BankAccount
+}
