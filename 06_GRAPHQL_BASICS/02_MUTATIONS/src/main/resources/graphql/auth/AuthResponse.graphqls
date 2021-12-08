@@ -1,0 +1,6 @@
+
+
+type AuthResponse{
+    error: Error
+    user: User
+}
