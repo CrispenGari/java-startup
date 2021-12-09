@@ -1,0 +1,12 @@
+# client input type
+input ClientInput{
+    firstName: String!
+    lastName: String
+}
+
+# bank account input type
+input BankAccountInput{
+    client: ClientInput!,
+    currency: String!,
+    name: String!
+}

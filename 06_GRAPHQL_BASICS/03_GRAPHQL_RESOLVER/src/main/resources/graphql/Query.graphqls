@@ -1,0 +1,6 @@
+
+type Query{
+    bankAccount(
+        input: BankAccountInput!
+    ): BankAccount
+}

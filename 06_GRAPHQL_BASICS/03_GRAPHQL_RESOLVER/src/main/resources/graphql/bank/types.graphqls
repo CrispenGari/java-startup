@@ -1,0 +1,19 @@
+
+# client type
+type Client{
+    firstName: String!
+    lastName: String!
+}
+
+# currency type
+enum Currency{
+    USD,
+    ZAR
+}
+
+# bank account type
+type BankAccount{
+    name: String!,
+    client: Client!
+    currency: Currency!
+}
