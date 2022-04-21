@@ -1,2 +1,2 @@
-# java-backend
-💎 This repository contains some java backend applications using different technologies.
+### Java Startup
+💎 This repository contains some java applications using different technologies.

@@ -575,7 +575,7 @@ We are getting errors where there are no errors. We will have a practical on Err
 
 ### Configuring cores
 
-This snipped is already configured for us all we have is to cpy it and edit to work on our application and it is found
+This snipped is already configured for us all we have is to copy it and edit to work on our application and it is found
 in our ``PaginationApplication.java``  and looks as follows:
 
 ```java
